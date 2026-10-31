@@ -59,6 +59,17 @@ def normalize_url(raw: str) -> str:
     return host
 
 
+def normalize_for_type(alert_type: str, raw: str) -> str:
+    """Chuẩn hóa theo loại đã chỉ định (dùng cho Admin nhập cảnh báo)."""
+    if alert_type == "account":
+        return normalize_account(raw)
+    if alert_type == "phone":
+        return normalize_phone(raw)
+    if alert_type == "url":
+        return normalize_url(raw)
+    raise NormalizationError("Loại cảnh báo không hợp lệ")
+
+
 def normalize_auto(raw: str) -> Normalized:
     """Tự nhận dạng loại giá trị. Ưu tiên: URL (có dấu chấm + chữ/://), SĐT, STK."""
     value = raw.strip()

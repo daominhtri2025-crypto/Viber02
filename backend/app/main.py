@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.api import auth, lookup
+from app.api import admin_alerts, auth, lookup
 from app.core.config import get_settings
 from app.core.database import Base, engine
 
@@ -17,9 +17,10 @@ async def lifespan(_: FastAPI):
 
 
 settings = get_settings()
-app = FastAPI(title=settings.app_name, version="0.2.0", lifespan=lifespan)
+app = FastAPI(title=settings.app_name, version="0.3.0", lifespan=lifespan)
 app.include_router(auth.router)
 app.include_router(lookup.router)
+app.include_router(admin_alerts.router)
 
 
 @app.get("/api/health")
