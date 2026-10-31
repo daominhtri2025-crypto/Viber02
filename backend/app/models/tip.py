@@ -23,6 +23,18 @@ class Tip(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 
 
+class TipNote(Base):
+    """Ghi chú nội bộ của Admin về một tố giác; nội dung mã hóa khi lưu."""
+
+    __tablename__ = "tip_notes"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    tip_id: Mapped[int] = mapped_column(ForeignKey("tips.id", ondelete="CASCADE"), index=True)
+    admin_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    note_enc: Mapped[bytes] = mapped_column(LargeBinary)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
 class TipAttachment(Base):
     """Ảnh đính kèm đã mã hóa trên đĩa; chỉ lưu đường dẫn tương đối."""
 

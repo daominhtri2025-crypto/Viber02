@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.api import admin_alerts, admin_contents, auth, contents, lookup, tips
+from app.api import admin_alerts, admin_contents, admin_tips, auth, contents, lookup, tips
 from app.core.config import get_settings
 from app.core.database import Base, engine
 
@@ -10,20 +10,23 @@ from app.core.database import Base, engine
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     # Demo v1: tạo bảng tự động. Có thể thay bằng Alembic ở giai đoạn sau.
-    from app.models import Alert, AuditLog, ContentItem, RateLimit, Tip, TipAttachment, User  # noqa: F401
+    from app.models import (  # noqa: F401  (đăng ký model)
+        Alert, AuditLog, ContentItem, RateLimit, Tip, TipAttachment, TipNote, User,
+    )
 
     Base.metadata.create_all(bind=engine)
     yield
 
 
 settings = get_settings()
-app = FastAPI(title=settings.app_name, version="0.5.0", lifespan=lifespan)
+app = FastAPI(title=settings.app_name, version="0.6.0", lifespan=lifespan)
 app.include_router(auth.router)
 app.include_router(lookup.router)
 app.include_router(admin_alerts.router)
 app.include_router(contents.router)
 app.include_router(admin_contents.router)
 app.include_router(tips.router)
+app.include_router(admin_tips.router)
 
 
 @app.get("/api/health")
