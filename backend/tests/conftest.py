@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 import pytest
 from cryptography.fernet import Fernet
@@ -8,6 +9,7 @@ from fastapi.testclient import TestClient
 os.environ["DATABASE_URL"] = "sqlite:///./test_scam_shield.db"
 os.environ["SECRET_KEY"] = "test-secret-key-for-pytest-only"
 os.environ["FERNET_KEY"] = Fernet.generate_key().decode()
+os.environ["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="scamshield-test-uploads-")
 
 from app.core.database import Base, SessionLocal, engine  # noqa: E402
 from app.core.security import hash_password  # noqa: E402
