@@ -26,6 +26,7 @@ class Alert(Base):
     value_display: Mapped[str] = mapped_column(String(253))
     risk_level: Mapped[str] = mapped_column(String(8), default="high")
     description: Mapped[str] = mapped_column(Text, default="")
+    search_text: Mapped[str] = mapped_column(Text, default="")  # casefold, phục vụ tìm kiếm tiếng Việt
     source_ref: Mapped[str] = mapped_column(String(500), default="")
     status: Mapped[str] = mapped_column(String(16), default="draft")
     created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)

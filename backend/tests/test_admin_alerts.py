@@ -136,3 +136,11 @@ def test_missing_alert_returns_404(client, admin_user):
     h = _token(client, admin_user)
     assert client.get("/api/admin/alerts/9999", headers=h).status_code == 404
     assert client.post("/api/admin/alerts/9999/publish", headers=h).status_code == 404
+
+
+def test_search_matches_vietnamese_uppercase_description(client, admin_user):
+    h = _token(client, admin_user)
+    cid = _create(client, h, description="Đòi tiền Đặt cọc qua ứng dụng").json()["id"]
+    assert cid
+    found = client.get("/api/admin/alerts", params={"q": "đặt cọc"}, headers=h).json()
+    assert [x["id"] for x in found] == [cid]

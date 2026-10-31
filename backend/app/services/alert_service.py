@@ -22,6 +22,10 @@ def _now() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def _search_text(value_norm: str, description: str) -> str:
+    return f"{value_norm}\n{description}".casefold()
+
+
 def create_alert(
     db: Session,
     *,
@@ -50,6 +54,7 @@ def create_alert(
     alert.risk_level = risk_level
     alert.description = description
     alert.source_ref = source_ref
+    alert.search_text = _search_text(value_norm, description)
     alert.status = "draft"
     alert.published_at = None
     alert.created_by = actor_id
@@ -93,6 +98,7 @@ def update_alert(
         if field in changes and changes[field] is not None:
             setattr(alert, field, changes[field])
 
+    alert.search_text = _search_text(alert.value_norm, alert.description)
     db.commit()
     db.refresh(alert)
     record_audit(db, action="alert.update", entity="alert", actor_id=actor_id,

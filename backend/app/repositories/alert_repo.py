@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import or_, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.alert import Alert
@@ -44,13 +44,7 @@ def list_alerts(
     if alert_type:
         stmt = stmt.where(Alert.type == alert_type)
     if q:
-        pattern = f"%{q.lower()}%"
-        stmt = stmt.where(
-            or_(
-                Alert.value_norm.ilike(pattern),
-                Alert.description.ilike(pattern),
-            )
-        )
+        stmt = stmt.where(Alert.search_text.contains(q.casefold(), autoescape=True))
     stmt = stmt.order_by(Alert.updated_at.desc(), Alert.id.desc()).limit(limit).offset(offset)
     return list(db.scalars(stmt))
 
